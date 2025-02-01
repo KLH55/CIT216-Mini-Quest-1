@@ -14,7 +14,6 @@ public class PlayerController : MonoBehaviour
     private float movementY;
     public float speed = 0;
     public TextMeshProUGUI healthText;
-    public GameObject winTextObject;
     public GameObject loseTextObject;
 
 
@@ -23,8 +22,7 @@ public class PlayerController : MonoBehaviour
         rb = GetComponent<Rigidbody>();
         health = 100;
         SetHealthText();
-        winTextObject.SetActive(false);
-        loseTextObject.SetActive(false);
+        loseTextObject.SetActive(false); // sets lose screen to be inactive
     }
 
     private void FixedUpdate()
@@ -35,7 +33,7 @@ public class PlayerController : MonoBehaviour
 
     void OnTriggerEnter(Collider other)
     {
-        if (other.gameObject.CompareTag("PickUp"))
+        if (other.gameObject.CompareTag("PickUp")) // checks to see if the pickup item is there
         {
             other.gameObject.SetActive(false);
             if (health < 100)
@@ -49,14 +47,14 @@ public class PlayerController : MonoBehaviour
 
     void OnCollisionEnter(Collision collision)
     {
-        if (collision.gameObject.tag == "Wall")
+        if (collision.gameObject.tag == "Wall") // checking to see if the player collided with a wall
         {
             health -= 10;
             SetHealthText();
         }
     }
 
-    void SetHealthText()
+    void SetHealthText() // creates the health text in game and also tracks when the player loses for going to zero health
     {
         healthText.text = "Health: " + health.ToString();
         if (health <= 0)
@@ -64,7 +62,7 @@ public class PlayerController : MonoBehaviour
             loseTextObject.SetActive(true);
             Application.Quit();
 
-            UnityEditor.EditorApplication.isPlaying = false;
+            UnityEditor.EditorApplication.isPlaying = false; // closes out of the game
         }
     }
 
