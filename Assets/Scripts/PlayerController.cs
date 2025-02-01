@@ -9,20 +9,22 @@ public class PlayerController : MonoBehaviour
 {
 
     private Rigidbody rb;
-    private int count;
+    private int health;
     private float movementX;
     private float movementY;
     public float speed = 0;
-    public TextMeshProUGUI countText;
+    public TextMeshProUGUI healthText;
     public GameObject winTextObject;
+    public GameObject loseTextObject;
 
 
     void Start()
     {
         rb = GetComponent<Rigidbody>();
-        count = 0;
-        SetCountText();
+        health = 100;
+        SetHealthText();
         winTextObject.SetActive(false);
+        loseTextObject.SetActive(false);
     }
 
     private void FixedUpdate()
@@ -36,17 +38,33 @@ public class PlayerController : MonoBehaviour
         if (other.gameObject.CompareTag("PickUp"))
         {
             other.gameObject.SetActive(false);
-            count = count + 1;
-            SetCountText();
+            if (health < 100)
+            {
+                health = health + 10;
+                SetHealthText();
+            }
+        
         }
     }
 
-    void SetCountText()
+    void OnCollisionEnter(Collision collision)
     {
-        countText.text = "Count: " + count.ToString();
-        if (count >= 20)
+        if (collision.gameObject.tag == "Wall")
         {
-            winTextObject.SetActive(true);
+            health -= 10;
+            SetHealthText();
+        }
+    }
+
+    void SetHealthText()
+    {
+        healthText.text = "Health: " + health.ToString();
+        if (health <= 0)
+        {
+            loseTextObject.SetActive(true);
+            Application.Quit();
+
+            UnityEditor.EditorApplication.isPlaying = false;
         }
     }
 
