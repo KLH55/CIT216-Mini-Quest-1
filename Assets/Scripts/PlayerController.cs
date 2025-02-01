@@ -4,6 +4,7 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using Unity.VisualScripting;
+using System;
 
 public class PlayerController : MonoBehaviour
 {
@@ -14,7 +15,10 @@ public class PlayerController : MonoBehaviour
     private float movementY;
     public float speed = 0;
     public TextMeshProUGUI healthText;
+    public TextMeshProUGUI timeText;
     public GameObject loseTextObject;
+    bool timerActive = false;
+    float currentTime;
 
 
     void Start()
@@ -23,6 +27,18 @@ public class PlayerController : MonoBehaviour
         health = 100;
         SetHealthText();
         loseTextObject.SetActive(false); // sets lose screen to be inactive
+        currentTime = 0;
+        StartTimer();
+    }
+
+    void Update()
+    {
+        if (timerActive == true)
+        {
+            currentTime = currentTime + Time.deltaTime;
+        }
+        TimeSpan time = TimeSpan.FromSeconds(currentTime);
+        timeText.text = time.ToString(@"mm\:ss\:fff");
     }
 
     private void FixedUpdate()
@@ -60,10 +76,22 @@ public class PlayerController : MonoBehaviour
         if (health <= 0)
         {
             loseTextObject.SetActive(true);
+            StopTimer();
             Application.Quit();
 
             UnityEditor.EditorApplication.isPlaying = false; // closes out of the game
         }
+    }
+
+    public void StartTimer()
+    {
+        timerActive = true;
+    }
+
+    public void StopTimer()
+    {
+        timerActive = false;
+        Debug.Log("Your time was: " + currentTime.ToString());
     }
 
     void OnMove(InputValue movementValue)
